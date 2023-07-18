@@ -1,18 +1,23 @@
-﻿namespace TicTacToe
+﻿using System;
+
+namespace TicTacToe
 {
     public class Player
     {
         public string Name;
         public string Marker;
-       public Player(string name, string marker)
+
+        public Player(string name, string marker)
         {
             Name = name;
             Marker = marker;
         }
     }
+
     internal class Program
     {
-        public static string[][] Board; 
+        public static string[][] Board;
+
         static void Main(string[] args)
         {
             Console.WriteLine("Welcome to Tic Tac Toe mane.");
@@ -27,12 +32,12 @@
             Console.WriteLine(player1.Name + " vs " + player2.Name);
             Board = new string[][]
             {
-                new string []  {"|1|", "|2|" ,"|3|" },
-                new string []  {"|4|", "|5|", "|6|" },
-                new string []  {"|7|", "|8|", "|9|" }
+                new string []  {"1", "2" ,"3" },
+                new string []  {"4", "5", "6" },
+                new string []  {"7", "8", "9" }
             };
             Console.WriteLine("Here's the Board");
-           DisplayBoard();
+            DisplayBoard();
 
             Player currentPlayer = player1;
             string winner = null;
@@ -43,30 +48,61 @@
                 Console.WriteLine("Please choose a slot.");
                 DisplayBoard();
                 string selectedSlot = Console.ReadLine();
-
-                if (selectedSlot == "1")
+                bool isValid = SelectionValid(selectedSlot);
+                if (isValid)
                 {
-                    Board[0][0] = String.Format("|{0}|",
-                        currentPlayer.Marker);
+                    int[] indexes = SelectionToIndexes(selectedSlot);
+                    int row = indexes[0];
+                    int column = indexes[1];
+                    string slotValue = Board[row][column];
+                    if (slotValue == "X" || slotValue == "O")
+                    {
+                        Console.WriteLine("Invalid Selection");
+                    }
+                    else
+                    {
+                        Board[row][column] = currentPlayer.Marker;
+                    }
                 }
 
-                if(currentPlayer == player1)
+                if (currentPlayer == player1)
                 {
-                    currentPlayer =player2;
-                }else if(currentPlayer == player2)
+                    currentPlayer = player2;
+                }
+                else if (currentPlayer == player2)
                 {
                     currentPlayer = player1;
                 }
             }
         }
+
+        public static bool SelectionValid(string selectedSlot)
+        {
+            int[] indexes = SelectionToIndexes(selectedSlot);
+            int row = indexes[0];
+            int column = indexes[1];
+            string slotValue = Board[row][column];
+            if (slotValue == "X" || slotValue == "O")
+            {
+                Console.WriteLine("Selection is invalid");
+                return false;
+            }
+            return true;
+        }
+
         static void DisplayBoard()
         {
-            Console.WriteLine("{0}{1}{2}", Board[0][0], Board[0][1],
-                Board[0][2] );
-            Console.WriteLine("{0}{1}{2}", Board[1][0], Board[1][1],
-                Board[1][2]);
-            Console.WriteLine("{0}{1}{2}", Board[2][0], Board[2][1],
-                Board[2][2]);
+            Console.WriteLine("|{0}||{1}||{2}|", Board[0][0], Board[0][1], Board[0][2]);
+            Console.WriteLine("|{0}||{1}||{2}|", Board[1][0], Board[1][1], Board[1][2]);
+            Console.WriteLine("|{0}||{1}||{2}|", Board[2][0], Board[2][1], Board[2][2]);
+        }
+
+        public static int[] SelectionToIndexes(string selectedSlot)
+        {
+            int index = int.Parse(selectedSlot) - 1;
+            int row = index / 3;
+            int column = index % 3;
+            return new int[] { row, column };
         }
     }
 }
